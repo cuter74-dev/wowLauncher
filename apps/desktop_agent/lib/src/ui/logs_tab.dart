@@ -1,0 +1,67 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../state/providers.dart';
+
+/// Recent launch audit logs.
+class LogsTab extends ConsumerWidget {
+  const LogsTab({super.key});
+
+  String _formatTime(DateTime t) {
+    final l = t.toLocal();
+    String two(int n) => n.toString().padLeft(2, '0');
+    return '${l.year}-${two(l.month)}-${two(l.day)} ${two(l.hour)}:${two(l.minute)}:${two(l.second)}';
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final logsAsync = ref.watch(logsProvider);
+
+    return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        title: const Text('실행 로그'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: () => ref.read(logsProvider.notifier).refresh(),
+          ),
+          IconButton(
+            tooltip: '로그 비우기',
+            icon: const Icon(Icons.delete_sweep_outlined),
+            onPressed: () => ref.read(logsProvider.notifier).clear(),
+          ),
+        ],
+      ),
+      body: logsAsync.when(
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (e, _) => Center(child: Text('오류: $e')),
+        data: (logs) {
+          if (logs.isEmpty) {
+            return const Center(child: Text('실행 로그가 없습니다.'));
+          }
+          return ListView.separated(
+            padding: const EdgeInsets.all(16),
+            itemCount: logs.length,
+            separatorBuilder: (_, __) => const Divider(height: 1),
+            itemBuilder: (context, i) {
+              final log = logs[i];
+              return ListTile(
+                leading: Icon(
+                  log.success ? Icons.check_circle : Icons.error,
+                  color: log.success ? Colors.green : Colors.red,
+                ),
+                title: Text('${log.appName}  ·  ${log.deviceName}'),
+                subtitle: Text(
+                  '${_formatTime(log.timestamp)}'
+                  '${log.message.isNotEmpty ? '\n${log.message}' : ''}',
+                ),
+                isThreeLine: log.message.isNotEmpty,
+              );
+            },
+          );
+        },
+      ),
+    );
+  }
+}

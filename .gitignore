@@ -1,0 +1,22 @@
+# Dart/Flutter
+.dart_tool/
+.packages
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+pubspec.lock
+
+# Generated platform runner folders (re-create with `flutter create .`)
+# Keep these ignored so the repo stays platform-agnostic until generated.
+apps/*/android/
+apps/*/ios/
+apps/*/linux/
+apps/*/macos/
+apps/*/windows/
+apps/*/web/
+
+# IDE / OS
+.idea/
+.vscode/
+*.iml
+.DS_Store

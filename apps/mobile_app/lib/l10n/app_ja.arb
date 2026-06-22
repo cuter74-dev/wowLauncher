@@ -1,0 +1,30 @@
+{
+  "@@locale": "ja",
+
+  "myPcs": "マイPC",
+  "addPc": "PCを追加",
+  "settings": "設定",
+  "language": "言語",
+  "cancel": "キャンセル",
+  "delete": "削除",
+  "retry": "再試行",
+  "errorWith": "エラー: {e}",
+
+  "noPcs": "接続されているPCがありません。\n\n下の「PCを追加」をタップして、PCの画面に表示されたQRコードをスキャンしてください。",
+  "deletePc": "PCを削除",
+  "deletePcConfirm": "「{name}」との接続を削除しますか？",
+
+  "scanQr": "QRコードをスキャン",
+  "pointAtQr": "PCの画面に表示されたQRコードにカメラを向けてください",
+  "scanAgain": "もう一度スキャン",
+  "pairingRequesting": "ペアリングをリクエストしています...",
+  "waitingApproval": "PCでの承認を待っています...",
+  "pairRejected": "PCが接続リクエストを拒否しました。",
+  "pairTimeout": "タイムアウトしました。もう一度お試しください。",
+  "pairErrorWith": "ペアリング中にエラーが発生しました: {e}",
+  "connectedTo": "「{name}」に接続しました",
+
+  "launched": "起動しました: {name}",
+  "launchFailedWith": "失敗しました: {message}",
+  "noAppsToShow": "表示するアプリがありません。\nPCでアプリを登録してください。"
+}

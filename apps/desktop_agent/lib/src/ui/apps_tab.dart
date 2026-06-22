@@ -3,35 +3,66 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared/shared.dart';
+import 'package:uuid/uuid.dart';
 
+import '../../l10n/app_localizations.dart';
+import '../services/macos_app_importer.dart';
 import '../state/providers.dart';
 import 'app_edit_dialog.dart';
+import 'application_picker_dialog.dart';
 
 /// Manages the list of registered apps: add / edit / delete / test / toggle.
 class AppsTab extends ConsumerWidget {
   const AppsTab({super.key});
 
+  /// One-step registration: pick an installed macOS app, auto-extract
+  /// name/path/icon, and save.
+  Future<void> _addFromApplication(BuildContext context, WidgetRef ref) async {
+    final selected = await showApplicationPickerDialog(context);
+    if (selected == null) return;
+
+    final imported = await const MacAppImporter().extractFrom(selected.path);
+    final now = DateTime.now();
+    final app = LaunchApp(
+      id: const Uuid().v4(),
+      name: imported.name,
+      executablePath: imported.executablePath,
+      iconPath: imported.iconPath,
+      enabled: true,
+      createdAt: now,
+      updatedAt: now,
+    );
+    await ref.read(appsProvider.notifier).save(app);
+    if (!context.mounted) return;
+    final l10n = AppLocalizations.of(context);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(l10n.registered(imported.name))),
+    );
+  }
+
   Future<void> _testRun(BuildContext context, WidgetRef ref, LaunchApp app) async {
     final launcher = ref.read(servicesProvider).launcher;
     final result = await launcher.launch(app);
     if (!context.mounted) return;
+    final l10n = AppLocalizations.of(context);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(result.ok ? '실행됨: ${app.name}' : '실패: ${result.message}'),
+        content: Text(result.ok ? l10n.launched(app.name) : l10n.launchFailedWith(result.message)),
         backgroundColor: result.ok ? Colors.green.shade700 : Colors.red.shade700,
       ),
     );
   }
 
   Future<void> _confirmDelete(BuildContext context, WidgetRef ref, LaunchApp app) async {
+    final l10n = AppLocalizations.of(context);
     final ok = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('앱 삭제'),
-        content: Text('"${app.name}" 앱을 삭제할까요?'),
+        title: Text(l10n.deleteApp),
+        content: Text(l10n.deleteAppConfirm(app.name)),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('취소')),
-          FilledButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('삭제')),
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(l10n.cancel)),
+          FilledButton(onPressed: () => Navigator.pop(ctx, true), child: Text(l10n.delete)),
         ],
       ),
     );
@@ -43,21 +74,37 @@ class AppsTab extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final appsAsync = ref.watch(appsProvider);
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => showAppEditDialog(context, ref, null),
-        icon: const Icon(Icons.add),
-        label: const Text('프로그램 추가'),
+      floatingActionButton: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          if (const MacAppImporter().isSupported) ...[
+            FloatingActionButton.extended(
+              heroTag: 'addFromApp',
+              onPressed: () => _addFromApplication(context, ref),
+              icon: const Icon(Icons.apps),
+              label: Text(l10n.addFromApplication),
+            ),
+            const SizedBox(height: 12),
+          ],
+          FloatingActionButton.extended(
+            heroTag: 'addManual',
+            onPressed: () => showAppEditDialog(context, ref, null),
+            icon: const Icon(Icons.add),
+            label: Text(l10n.addManual),
+          ),
+        ],
       ),
       body: appsAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text('오류: $e')),
+        error: (e, _) => Center(child: Text(l10n.errorWith('$e'))),
         data: (apps) {
           if (apps.isEmpty) {
-            return const Center(
-              child: Text('등록된 프로그램이 없습니다.\n오른쪽 아래 버튼으로 추가하세요.',
-                  textAlign: TextAlign.center),
+            return Center(
+              child: Text(l10n.noApps, textAlign: TextAlign.center),
             );
           }
           return ListView.separated(
@@ -79,7 +126,7 @@ class AppsTab extends ConsumerWidget {
                   children: [
                     // Mobile visibility toggle.
                     Tooltip(
-                      message: '모바일 표시',
+                      message: l10n.mobileVisible,
                       child: Switch(
                         value: app.enabled,
                         onChanged: (_) =>
@@ -87,17 +134,17 @@ class AppsTab extends ConsumerWidget {
                       ),
                     ),
                     IconButton(
-                      tooltip: '테스트 실행',
+                      tooltip: l10n.testRun,
                       icon: const Icon(Icons.play_arrow),
                       onPressed: () => _testRun(context, ref, app),
                     ),
                     IconButton(
-                      tooltip: '수정',
+                      tooltip: l10n.edit,
                       icon: const Icon(Icons.edit_outlined),
                       onPressed: () => showAppEditDialog(context, ref, app),
                     ),
                     IconButton(
-                      tooltip: '삭제',
+                      tooltip: l10n.delete,
                       icon: const Icon(Icons.delete_outline),
                       onPressed: () => _confirmDelete(context, ref, app),
                     ),

@@ -11,6 +11,11 @@ dependencies:
   flutter:
     sdk: flutter
 
+  # Localization (flutter gen-l10n + intl).
+  flutter_localizations:
+    sdk: flutter
+  intl: any
+
   # Shared models / DTOs.
   shared:
     path: ../../packages/shared
@@ -41,6 +46,16 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^4.0.0
+  flutter_launcher_icons: ^0.14.1
+
+# App icon generation (run: dart run flutter_launcher_icons).
+flutter_launcher_icons:
+  macos:
+    generate: true
+    image_path: "assets/wow_launcher_logo.png"
 
 flutter:
   uses-material-design: true
+  generate: true
+  assets:
+    - assets/wow_launcher_logo.png

@@ -1,3 +1,4 @@
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared/shared.dart';
 
@@ -9,6 +10,22 @@ import '../models/pc_connection.dart';
 final mobileDbProvider = Provider<MobileDatabase>(
   (ref) => throw UnimplementedError('mobileDbProvider must be overridden'),
 );
+
+/// Initial locale loaded from the DB at startup. Overridden in `main()`.
+final initialLocaleProvider = Provider<Locale?>((ref) => null);
+
+/// Current UI locale; null follows the system locale. Persisted via the DB.
+class LocaleNotifier extends Notifier<Locale?> {
+  @override
+  Locale? build() => ref.read(initialLocaleProvider);
+
+  Future<void> setLanguage(String? code) async {
+    await ref.read(mobileDbProvider).setLanguage(code);
+    state = (code == null || code.isEmpty) ? null : Locale(code);
+  }
+}
+
+final localeProvider = NotifierProvider<LocaleNotifier, Locale?>(LocaleNotifier.new);
 
 final agentClientProvider = Provider<AgentClient>((ref) {
   final client = AgentClient();

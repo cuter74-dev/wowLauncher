@@ -1,0 +1,30 @@
+{
+  "@@locale": "vi",
+
+  "myPcs": "PC của tôi",
+  "addPc": "Thêm PC",
+  "settings": "Cài đặt",
+  "language": "Ngôn ngữ",
+  "cancel": "Hủy",
+  "delete": "Xóa",
+  "retry": "Thử lại",
+  "errorWith": "Lỗi: {e}",
+
+  "noPcs": "Chưa có PC nào được kết nối.\n\nNhấn \"Thêm PC\" bên dưới và quét mã QR trên màn hình PC của bạn.",
+  "deletePc": "Xóa PC",
+  "deletePcConfirm": "Xóa kết nối với \"{name}\"?",
+
+  "scanQr": "Quét mã QR",
+  "pointAtQr": "Hướng vào mã QR trên màn hình PC của bạn",
+  "scanAgain": "Quét lại",
+  "pairingRequesting": "Đang yêu cầu ghép nối...",
+  "waitingApproval": "Đang chờ phê duyệt trên PC...",
+  "pairRejected": "PC đã từ chối yêu cầu kết nối.",
+  "pairTimeout": "Đã hết thời gian chờ. Vui lòng thử lại.",
+  "pairErrorWith": "Đã xảy ra lỗi khi ghép nối: {e}",
+  "connectedTo": "Đã kết nối với \"{name}\"",
+
+  "launched": "Đã khởi chạy: {name}",
+  "launchFailedWith": "Thất bại: {message}",
+  "noAppsToShow": "Không có ứng dụng nào để hiển thị.\nHãy đăng ký ứng dụng trên PC."
+}

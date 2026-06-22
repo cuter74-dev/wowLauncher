@@ -22,7 +22,7 @@ class MobileDatabase {
     final path = p.join(dir, 'remote_launcher_mobile.db');
     final db = await openDatabase(
       path,
-      version: 1,
+      version: 2,
       onCreate: (db, _) async {
         await db.execute('''
           CREATE TABLE pcs (
@@ -36,10 +36,42 @@ class MobileDatabase {
             lastConnectedAt TEXT
           )
         ''');
+        await _createSettings(db);
+      },
+      onUpgrade: (db, oldVersion, _) async {
+        if (oldVersion < 2) await _createSettings(db);
       },
     );
     _instance = MobileDatabase._(db);
     return _instance!;
+  }
+
+  static Future<void> _createSettings(Database db) async {
+    await db.execute('''
+      CREATE TABLE settings (
+        key TEXT PRIMARY KEY,
+        value TEXT NOT NULL
+      )
+    ''');
+  }
+
+  static const _kLanguage = 'language';
+
+  /// Selected UI language code (e.g. 'en', 'ko'), or null to follow the system.
+  Future<String?> getLanguage() async {
+    final rows = await _db.query('settings',
+        where: 'key = ?', whereArgs: [_kLanguage], limit: 1);
+    if (rows.isEmpty) return null;
+    final v = rows.first['value'] as String?;
+    return (v == null || v.isEmpty) ? null : v;
+  }
+
+  Future<void> setLanguage(String? code) async {
+    await _db.insert(
+      'settings',
+      {'key': _kLanguage, 'value': code ?? ''},
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
   }
 
   Future<List<PcConnection>> getAll() async {

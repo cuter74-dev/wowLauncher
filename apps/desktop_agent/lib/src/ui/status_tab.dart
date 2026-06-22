@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:shared/shared.dart';
 
+import '../../l10n/app_localizations.dart';
 import '../state/providers.dart';
 
 /// Main status screen: agent state, PC name, port, LAN IPs and pairing QR.
@@ -15,13 +16,14 @@ class StatusTab extends ConsumerWidget {
     final netAsync = ref.watch(networkInfoProvider);
     final pairing = ref.watch(pairingServiceProvider);
     final agentName = ref.watch(servicesProvider).agentName;
+    final l10n = AppLocalizations.of(context);
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Status', style: Theme.of(context).textTheme.headlineMedium),
+          Text(l10n.tabStatus, style: Theme.of(context).textTheme.headlineMedium),
           const SizedBox(height: 16),
           Wrap(
             spacing: 24,
@@ -40,29 +42,29 @@ class StatusTab extends ConsumerWidget {
                         _StatusRow(
                           icon: server.running ? Icons.check_circle : Icons.cancel,
                           color: server.running ? Colors.green : Colors.red,
-                          label: 'Agent',
-                          value: server.running ? '실행 중' : '중지됨',
+                          label: l10n.agent,
+                          value: server.running ? l10n.running : l10n.stopped,
                         ),
                         const Divider(),
                         _StatusRow(
                           icon: Icons.computer,
-                          label: 'PC 이름',
+                          label: l10n.pcName,
                           value: agentName,
                         ),
                         const Divider(),
                         _StatusRow(
                           icon: Icons.lan,
-                          label: '포트',
+                          label: l10n.port,
                           value: '${server.port}',
                         ),
                         const Divider(),
                         const SizedBox(height: 8),
-                        Text('사용 가능한 IP 주소',
+                        Text(l10n.availableIps,
                             style: Theme.of(context).textTheme.titleSmall),
                         const SizedBox(height: 8),
                         netAsync.when(
                           data: (info) => info.ips.isEmpty
-                              ? const Text('네트워크 주소를 찾을 수 없습니다.')
+                              ? Text(l10n.noNetworkAddress)
                               : Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -74,13 +76,13 @@ class StatusTab extends ConsumerWidget {
                                   ],
                                 ),
                           loading: () => const LinearProgressIndicator(),
-                          error: (e, _) => Text('오류: $e'),
+                          error: (e, _) => Text(l10n.errorWith(e)),
                         ),
                         const SizedBox(height: 8),
                         OutlinedButton.icon(
                           onPressed: () => ref.invalidate(networkInfoProvider),
                           icon: const Icon(Icons.refresh),
-                          label: const Text('IP 새로고침'),
+                          label: Text(l10n.refreshIp),
                         ),
                       ],
                     ),
@@ -96,7 +98,7 @@ class StatusTab extends ConsumerWidget {
                     padding: const EdgeInsets.all(20),
                     child: Column(
                       children: [
-                        Text('모바일 페어링',
+                        Text(l10n.mobilePairing,
                             style: Theme.of(context).textTheme.titleMedium),
                         const SizedBox(height: 12),
                         netAsync.when(
@@ -120,9 +122,9 @@ class StatusTab extends ConsumerWidget {
                                       backgroundColor: Colors.white,
                                     ),
                                     const SizedBox(height: 12),
-                                    SelectableText('Code: ${pairing.currentCode}'),
+                                    SelectableText(l10n.codeLabel(pairing.currentCode)),
                                     const SizedBox(height: 4),
-                                    Text('Host: $host:${server.port}',
+                                    Text(l10n.hostLabel('$host:${server.port}'),
                                         style: Theme.of(context).textTheme.bodySmall),
                                   ],
                                 );
@@ -133,13 +135,13 @@ class StatusTab extends ConsumerWidget {
                             padding: EdgeInsets.all(40),
                             child: CircularProgressIndicator(),
                           ),
-                          error: (e, _) => Text('오류: $e'),
+                          error: (e, _) => Text(l10n.errorWith(e)),
                         ),
                         const SizedBox(height: 12),
                         TextButton.icon(
                           onPressed: pairing.rotateCode,
                           icon: const Icon(Icons.autorenew),
-                          label: const Text('새 코드 생성'),
+                          label: Text(l10n.newCode),
                         ),
                       ],
                     ),

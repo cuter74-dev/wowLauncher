@@ -11,6 +11,10 @@ dependencies:
   flutter:
     sdk: flutter
 
+  flutter_localizations:
+    sdk: flutter
+  intl: any
+
   shared:
     path: ../../packages/shared
 
@@ -32,6 +36,28 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^4.0.0
+  flutter_launcher_icons: ^0.14.1
+  flutter_native_splash: ^2.4.1
+
+# Splash screen generation (run: dart run flutter_native_splash:create).
+flutter_native_splash:
+  color: "#0B1220"
+  image: assets/wow_launcher_logo.png
+  android_12:
+    color: "#0B1220"
+    image: assets/wow_launcher_logo.png
+
+# App launcher icon generation (run: dart run flutter_launcher_icons).
+flutter_launcher_icons:
+  android: true
+  ios: false
+  image_path: "assets/wow_launcher_logo.png"
+  min_sdk_android: 21
+  adaptive_icon_background: "#0B1220"
+  adaptive_icon_foreground: "assets/wow_launcher_logo.png"
 
 flutter:
   uses-material-design: true
+  generate: true
+  assets:
+    - assets/wow_launcher_logo.png

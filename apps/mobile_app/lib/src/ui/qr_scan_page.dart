@@ -6,6 +6,7 @@ import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:shared/shared.dart';
 import 'package:uuid/uuid.dart';
 
+import '../../l10n/app_localizations.dart';
 import '../api/agent_client.dart';
 import '../models/pc_connection.dart';
 import '../state/providers.dart';
@@ -51,9 +52,10 @@ class _QrScanPageState extends ConsumerState<QrScanPage> {
   }
 
   Future<void> _runPairing(PairingPayload payload) async {
+    final l10n = AppLocalizations.of(context);
     setState(() {
       _phase = _Phase.pairing;
-      _status = '페어링 요청 중...';
+      _status = l10n.pairingRequesting;
     });
 
     final client = ref.read(agentClientProvider);
@@ -70,7 +72,7 @@ class _QrScanPageState extends ConsumerState<QrScanPage> {
       );
 
       if (!mounted) return;
-      setState(() => _status = 'PC에서 승인을 기다리는 중...');
+      setState(() => _status = l10n.waitingApproval);
 
       // Poll for approval (up to ~60s).
       const maxTries = 40;
@@ -83,19 +85,20 @@ class _QrScanPageState extends ConsumerState<QrScanPage> {
           return;
         }
         if (status.status == PairStatus.rejected) {
-          _fail('PC에서 연결 요청을 거부했습니다.');
+          _fail(l10n.pairRejected);
           return;
         }
       }
-      _fail('시간이 초과되었습니다. 다시 시도하세요.');
+      _fail(l10n.pairTimeout);
     } on AgentApiException catch (e) {
       _fail(e.message);
     } catch (e) {
-      _fail('페어링 중 오류가 발생했습니다: $e');
+      _fail(l10n.pairErrorWith(e));
     }
   }
 
   Future<void> _onApproved(PairingPayload payload, String token) async {
+    final l10n = AppLocalizations.of(context);
     // Try to read the platform name (best effort).
     String platform = '';
     try {
@@ -106,7 +109,7 @@ class _QrScanPageState extends ConsumerState<QrScanPage> {
     } catch (_) {}
 
     final pc = PcConnection(
-      id: Uuid().v4(),
+      id: const Uuid().v4(),
       agentName: payload.agentName,
       host: payload.host,
       port: payload.port,
@@ -119,7 +122,7 @@ class _QrScanPageState extends ConsumerState<QrScanPage> {
 
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('"${payload.agentName}" 연결됨')),
+      SnackBar(content: Text(l10n.connectedTo(payload.agentName))),
     );
     Navigator.of(context).pop();
   }
@@ -143,8 +146,9 @@ class _QrScanPageState extends ConsumerState<QrScanPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
-      appBar: AppBar(title: const Text('QR 코드 스캔')),
+      appBar: AppBar(title: Text(l10n.scanQr)),
       body: switch (_phase) {
         _Phase.scanning => Stack(
             alignment: Alignment.center,
@@ -159,11 +163,11 @@ class _QrScanPageState extends ConsumerState<QrScanPage> {
                   borderRadius: BorderRadius.circular(16),
                 ),
               ),
-              const Positioned(
+              Positioned(
                 bottom: 48,
                 child: Text(
-                  'PC 화면의 QR 코드를 비추세요',
-                  style: TextStyle(color: Colors.white, fontSize: 16),
+                  l10n.pointAtQr,
+                  style: const TextStyle(color: Colors.white, fontSize: 16),
                 ),
               ),
             ],
@@ -188,7 +192,7 @@ class _QrScanPageState extends ConsumerState<QrScanPage> {
                   const SizedBox(height: 12),
                   Text(_status, textAlign: TextAlign.center),
                   const SizedBox(height: 24),
-                  FilledButton(onPressed: _retry, child: const Text('다시 스캔')),
+                  FilledButton(onPressed: _retry, child: Text(l10n.scanAgain)),
                 ],
               ),
             ),

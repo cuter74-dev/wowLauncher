@@ -1,0 +1,30 @@
+{
+  "@@locale": "ko",
+
+  "myPcs": "내 PC",
+  "addPc": "PC 추가",
+  "settings": "설정",
+  "language": "언어",
+  "cancel": "취소",
+  "delete": "삭제",
+  "retry": "다시 시도",
+  "errorWith": "오류: {e}",
+
+  "noPcs": "연결된 PC가 없습니다.\n\n아래 \"PC 추가\" 버튼을 눌러\nPC 화면의 QR 코드를 스캔하세요.",
+  "deletePc": "PC 삭제",
+  "deletePcConfirm": "\"{name}\" 연결을 삭제할까요?",
+
+  "scanQr": "QR 코드 스캔",
+  "pointAtQr": "PC 화면의 QR 코드를 비추세요",
+  "scanAgain": "다시 스캔",
+  "pairingRequesting": "페어링 요청 중...",
+  "waitingApproval": "PC에서 승인을 기다리는 중...",
+  "pairRejected": "PC에서 연결 요청을 거부했습니다.",
+  "pairTimeout": "시간이 초과되었습니다. 다시 시도하세요.",
+  "pairErrorWith": "페어링 중 오류가 발생했습니다: {e}",
+  "connectedTo": "\"{name}\" 연결됨",
+
+  "launched": "실행됨: {name}",
+  "launchFailedWith": "실패: {message}",
+  "noAppsToShow": "표시할 앱이 없습니다.\nPC에서 앱을 등록하세요."
+}

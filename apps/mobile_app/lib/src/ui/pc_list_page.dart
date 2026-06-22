@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../l10n/app_localizations.dart';
 import '../models/pc_connection.dart';
 import '../state/providers.dart';
 import 'launcher_page.dart';
 import 'qr_scan_page.dart';
+import 'settings_page.dart';
 
 /// First screen: list of paired PCs + add-by-QR.
 class PcListPage extends ConsumerWidget {
@@ -12,10 +14,29 @@ class PcListPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
     final pcsAsync = ref.watch(pcsProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('내 PC')),
+      appBar: AppBar(
+        leading: Padding(
+          padding: const EdgeInsets.all(8),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: Image.asset('assets/wow_launcher_logo.png', fit: BoxFit.cover),
+          ),
+        ),
+        title: Text(l10n.myPcs),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings_outlined),
+            tooltip: l10n.settings,
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute<void>(builder: (_) => const SettingsPage()),
+            ),
+          ),
+        ],
+      ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () async {
           await Navigator.of(context).push(
@@ -23,20 +44,17 @@ class PcListPage extends ConsumerWidget {
           );
         },
         icon: const Icon(Icons.qr_code_scanner),
-        label: const Text('PC 추가'),
+        label: Text(l10n.addPc),
       ),
       body: pcsAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text('오류: $e')),
+        error: (e, _) => Center(child: Text(l10n.errorWith(e))),
         data: (pcs) {
           if (pcs.isEmpty) {
-            return const Center(
+            return Center(
               child: Padding(
-                padding: EdgeInsets.all(32),
-                child: Text(
-                  '연결된 PC가 없습니다.\n\n아래 "PC 추가" 버튼을 눌러\nPC 화면의 QR 코드를 스캔하세요.',
-                  textAlign: TextAlign.center,
-                ),
+                padding: const EdgeInsets.all(32),
+                child: Text(l10n.noPcs, textAlign: TextAlign.center),
               ),
             );
           }
@@ -67,14 +85,15 @@ class PcListPage extends ConsumerWidget {
   }
 
   Future<void> _confirmRemove(BuildContext context, WidgetRef ref, PcConnection pc) async {
+    final l10n = AppLocalizations.of(context);
     final ok = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('PC 삭제'),
-        content: Text('"${pc.agentName}" 연결을 삭제할까요?'),
+        title: Text(l10n.deletePc),
+        content: Text(l10n.deletePcConfirm(pc.agentName)),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('취소')),
-          FilledButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('삭제')),
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(l10n.cancel)),
+          FilledButton(onPressed: () => Navigator.pop(ctx, true), child: Text(l10n.delete)),
         ],
       ),
     );

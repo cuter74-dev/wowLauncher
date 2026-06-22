@@ -1,0 +1,30 @@
+{
+  "@@locale": "es",
+
+  "myPcs": "Mis PC",
+  "addPc": "Agregar PC",
+  "settings": "Ajustes",
+  "language": "Idioma",
+  "cancel": "Cancelar",
+  "delete": "Eliminar",
+  "retry": "Reintentar",
+  "errorWith": "Error: {e}",
+
+  "noPcs": "No hay PC conectados.\n\nToca \"Agregar PC\" abajo y escanea el código QR en la pantalla de tu PC.",
+  "deletePc": "Eliminar PC",
+  "deletePcConfirm": "¿Eliminar la conexión con \"{name}\"?",
+
+  "scanQr": "Escanear código QR",
+  "pointAtQr": "Apunta al código QR en la pantalla de tu PC",
+  "scanAgain": "Escanear de nuevo",
+  "pairingRequesting": "Solicitando emparejamiento...",
+  "waitingApproval": "Esperando la aprobación en el PC...",
+  "pairRejected": "El PC rechazó la solicitud de conexión.",
+  "pairTimeout": "Se agotó el tiempo. Inténtalo de nuevo.",
+  "pairErrorWith": "Ocurrió un error durante el emparejamiento: {e}",
+  "connectedTo": "Conectado a \"{name}\"",
+
+  "launched": "Iniciado: {name}",
+  "launchFailedWith": "Error: {message}",
+  "noAppsToShow": "No hay aplicaciones para mostrar.\nRegistra aplicaciones en el PC."
+}

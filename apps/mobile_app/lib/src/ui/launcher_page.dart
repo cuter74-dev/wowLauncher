@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared/shared.dart';
 
+import '../../l10n/app_localizations.dart';
 import '../api/agent_client.dart';
 import '../models/pc_connection.dart';
 import '../state/providers.dart';
@@ -16,13 +17,14 @@ class LauncherPage extends ConsumerWidget {
   final PcConnection pc;
 
   Future<void> _launch(BuildContext context, WidgetRef ref, AppListItem app) async {
+    final l10n = AppLocalizations.of(context);
     final client = ref.read(agentClientProvider);
     try {
       final res = await client.launch(pc, app.id);
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(res.ok ? '실행됨: ${app.name}' : '실패: ${res.message}'),
+          content: Text(res.ok ? l10n.launched(app.name) : l10n.launchFailedWith(res.message)),
           backgroundColor: res.ok ? Colors.green.shade700 : Colors.red.shade700,
         ),
       );
@@ -36,6 +38,7 @@ class LauncherPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
     final appsAsync = ref.watch(appsForPcProvider(pc));
 
     return Scaffold(
@@ -62,7 +65,7 @@ class LauncherPage extends ConsumerWidget {
                 const SizedBox(height: 16),
                 FilledButton(
                   onPressed: () => ref.invalidate(appsForPcProvider(pc)),
-                  child: const Text('다시 시도'),
+                  child: Text(l10n.retry),
                 ),
               ],
             ),
@@ -70,8 +73,7 @@ class LauncherPage extends ConsumerWidget {
         ),
         data: (apps) {
           if (apps.isEmpty) {
-            return const Center(child: Text('표시할 앱이 없습니다.\nPC에서 앱을 등록하세요.',
-                textAlign: TextAlign.center));
+            return Center(child: Text(l10n.noAppsToShow, textAlign: TextAlign.center));
           }
           return RefreshIndicator(
             onRefresh: () async => ref.invalidate(appsForPcProvider(pc)),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../l10n/app_localizations.dart';
 import '../state/providers.dart';
 
 /// Recent launch audit logs.
@@ -16,18 +17,19 @@ class LogsTab extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final logsAsync = ref.watch(logsProvider);
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: const Text('실행 로그'),
+        title: Text(l10n.launchLogs),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: () => ref.read(logsProvider.notifier).refresh(),
           ),
           IconButton(
-            tooltip: '로그 비우기',
+            tooltip: l10n.clearLogs,
             icon: const Icon(Icons.delete_sweep_outlined),
             onPressed: () => ref.read(logsProvider.notifier).clear(),
           ),
@@ -35,10 +37,10 @@ class LogsTab extends ConsumerWidget {
       ),
       body: logsAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text('오류: $e')),
+        error: (e, _) => Center(child: Text(l10n.errorWith(e))),
         data: (logs) {
           if (logs.isEmpty) {
-            return const Center(child: Text('실행 로그가 없습니다.'));
+            return Center(child: Text(l10n.noLogs));
           }
           return ListView.separated(
             padding: const EdgeInsets.all(16),

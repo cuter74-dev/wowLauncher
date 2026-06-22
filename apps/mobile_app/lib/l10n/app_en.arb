@@ -1,0 +1,36 @@
+{
+  "@@locale": "en",
+
+  "myPcs": "My PCs",
+  "addPc": "Add PC",
+  "settings": "Settings",
+  "language": "Language",
+  "cancel": "Cancel",
+  "delete": "Delete",
+  "retry": "Retry",
+  "errorWith": "Error: {e}",
+  "@errorWith": { "placeholders": { "e": { "type": "Object" } } },
+
+  "noPcs": "No PCs connected.\n\nTap \"Add PC\" below and scan the QR code on your PC screen.",
+  "deletePc": "Delete PC",
+  "deletePcConfirm": "Delete the connection to \"{name}\"?",
+  "@deletePcConfirm": { "placeholders": { "name": { "type": "String" } } },
+
+  "scanQr": "Scan QR code",
+  "pointAtQr": "Point at the QR code on your PC screen",
+  "scanAgain": "Scan again",
+  "pairingRequesting": "Requesting pairing...",
+  "waitingApproval": "Waiting for approval on the PC...",
+  "pairRejected": "The PC rejected the connection request.",
+  "pairTimeout": "Timed out. Please try again.",
+  "pairErrorWith": "An error occurred during pairing: {e}",
+  "@pairErrorWith": { "placeholders": { "e": { "type": "Object" } } },
+  "connectedTo": "Connected to \"{name}\"",
+  "@connectedTo": { "placeholders": { "name": { "type": "String" } } },
+
+  "launched": "Launched: {name}",
+  "@launched": { "placeholders": { "name": { "type": "String" } } },
+  "launchFailedWith": "Failed: {message}",
+  "@launchFailedWith": { "placeholders": { "message": { "type": "String" } } },
+  "noAppsToShow": "No apps to show.\nRegister apps on the PC."
+}

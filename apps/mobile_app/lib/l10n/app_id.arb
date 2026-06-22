@@ -1,0 +1,30 @@
+{
+  "@@locale": "id",
+
+  "myPcs": "PC Saya",
+  "addPc": "Tambah PC",
+  "settings": "Pengaturan",
+  "language": "Bahasa",
+  "cancel": "Batal",
+  "delete": "Hapus",
+  "retry": "Coba lagi",
+  "errorWith": "Kesalahan: {e}",
+
+  "noPcs": "Tidak ada PC yang terhubung.\n\nKetuk \"Tambah PC\" di bawah dan pindai kode QR di layar PC Anda.",
+  "deletePc": "Hapus PC",
+  "deletePcConfirm": "Hapus koneksi ke \"{name}\"?",
+
+  "scanQr": "Pindai kode QR",
+  "pointAtQr": "Arahkan ke kode QR di layar PC Anda",
+  "scanAgain": "Pindai ulang",
+  "pairingRequesting": "Meminta penyandingan...",
+  "waitingApproval": "Menunggu persetujuan di PC...",
+  "pairRejected": "PC menolak permintaan koneksi.",
+  "pairTimeout": "Waktu habis. Silakan coba lagi.",
+  "pairErrorWith": "Terjadi kesalahan saat penyandingan: {e}",
+  "connectedTo": "Terhubung ke \"{name}\"",
+
+  "launched": "Diluncurkan: {name}",
+  "launchFailedWith": "Gagal: {message}",
+  "noAppsToShow": "Tidak ada aplikasi untuk ditampilkan.\nDaftarkan aplikasi di PC."
+}

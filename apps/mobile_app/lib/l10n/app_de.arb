@@ -1,0 +1,30 @@
+{
+  "@@locale": "de",
+
+  "myPcs": "Meine PCs",
+  "addPc": "PC hinzufügen",
+  "settings": "Einstellungen",
+  "language": "Sprache",
+  "cancel": "Abbrechen",
+  "delete": "Löschen",
+  "retry": "Erneut versuchen",
+  "errorWith": "Fehler: {e}",
+
+  "noPcs": "Keine PCs verbunden.\n\nTippe unten auf \"PC hinzufügen\" und scanne den QR-Code auf deinem PC-Bildschirm.",
+  "deletePc": "PC löschen",
+  "deletePcConfirm": "Verbindung zu \"{name}\" löschen?",
+
+  "scanQr": "QR-Code scannen",
+  "pointAtQr": "Richte die Kamera auf den QR-Code auf deinem PC-Bildschirm",
+  "scanAgain": "Erneut scannen",
+  "pairingRequesting": "Kopplung wird angefordert...",
+  "waitingApproval": "Warte auf Bestätigung am PC...",
+  "pairRejected": "Der PC hat die Verbindungsanfrage abgelehnt.",
+  "pairTimeout": "Zeitüberschreitung. Bitte versuche es erneut.",
+  "pairErrorWith": "Bei der Kopplung ist ein Fehler aufgetreten: {e}",
+  "connectedTo": "Verbunden mit \"{name}\"",
+
+  "launched": "Gestartet: {name}",
+  "launchFailedWith": "Fehlgeschlagen: {message}",
+  "noAppsToShow": "Keine Apps zum Anzeigen.\nRegistriere Apps auf dem PC."
+}

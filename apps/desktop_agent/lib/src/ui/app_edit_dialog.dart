@@ -4,7 +4,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared/shared.dart';
 import 'package:uuid/uuid.dart';
 
+import '../../l10n/app_localizations.dart';
+import '../services/macos_app_importer.dart';
 import '../state/providers.dart';
+import 'application_picker_dialog.dart';
 
 /// Opens the add/edit dialog. Pass null [existing] to create a new app.
 Future<void> showAppEditDialog(BuildContext context, WidgetRef ref, LaunchApp? existing) {
@@ -75,6 +78,19 @@ class _AppEditDialogState extends ConsumerState<_AppEditDialog> {
     }
   }
 
+  /// Pick an installed macOS app and auto-fill name / path / icon.
+  Future<void> _pickApplication() async {
+    final selected = await showApplicationPickerDialog(context);
+    if (selected == null) return;
+    final imp = await const MacAppImporter().extractFrom(selected.path);
+    if (!mounted) return;
+    setState(() {
+      _name.text = imp.name;
+      _exec.text = imp.executablePath;
+      if (imp.iconPath != null) _iconPath.text = imp.iconPath!;
+    });
+  }
+
   Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
 
@@ -88,7 +104,7 @@ class _AppEditDialogState extends ConsumerState<_AppEditDialog> {
     final existing = widget.existing;
     final app = existing == null
         ? LaunchApp(
-            id: Uuid().v4(),
+            id: const Uuid().v4(),
             name: _name.text.trim(),
             executablePath: _exec.text.trim(),
             arguments: args,
@@ -118,9 +134,10 @@ class _AppEditDialogState extends ConsumerState<_AppEditDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final isEdit = widget.existing != null;
     return AlertDialog(
-      title: Text(isEdit ? '프로그램 수정' : '프로그램 추가'),
+      title: Text(isEdit ? l10n.editProgram : l10n.addProgram),
       content: SizedBox(
         width: 520,
         child: Form(
@@ -129,37 +146,48 @@ class _AppEditDialogState extends ConsumerState<_AppEditDialog> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
+                if (const MacAppImporter().isSupported) ...[
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: OutlinedButton.icon(
+                      onPressed: _pickApplication,
+                      icon: const Icon(Icons.apps),
+                      label: Text(l10n.importFromApplication),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                ],
                 TextFormField(
                   controller: _name,
-                  decoration: const InputDecoration(labelText: '앱 이름 *'),
+                  decoration: InputDecoration(labelText: l10n.appNameRequired),
                   validator: (v) =>
-                      (v == null || v.trim().isEmpty) ? '이름을 입력하세요.' : null,
+                      (v == null || v.trim().isEmpty) ? l10n.enterName : null,
                 ),
                 TextFormField(
                   controller: _exec,
                   decoration: InputDecoration(
-                    labelText: '실행 파일 경로 *',
+                    labelText: l10n.execPathRequired,
                     suffixIcon: IconButton(
                       icon: const Icon(Icons.folder_open),
                       onPressed: _pickExecutable,
                     ),
                   ),
                   validator: (v) =>
-                      (v == null || v.trim().isEmpty) ? '실행 파일 경로를 입력하세요.' : null,
+                      (v == null || v.trim().isEmpty) ? l10n.enterExecPath : null,
                 ),
                 TextFormField(
                   controller: _args,
                   minLines: 1,
                   maxLines: 4,
-                  decoration: const InputDecoration(
-                    labelText: '실행 인자 (선택)',
-                    helperText: '한 줄에 하나씩 입력하세요.',
+                  decoration: InputDecoration(
+                    labelText: l10n.launchArgsOptional,
+                    helperText: l10n.oneArgPerLine,
                   ),
                 ),
                 TextFormField(
                   controller: _workingDir,
                   decoration: InputDecoration(
-                    labelText: '작업 폴더 (선택)',
+                    labelText: l10n.workingDirOptional,
                     suffixIcon: IconButton(
                       icon: const Icon(Icons.folder_open),
                       onPressed: _pickWorkingDir,
@@ -169,7 +197,7 @@ class _AppEditDialogState extends ConsumerState<_AppEditDialog> {
                 TextFormField(
                   controller: _iconPath,
                   decoration: InputDecoration(
-                    labelText: '아이콘 이미지 경로 (선택)',
+                    labelText: l10n.iconImagePathOptional,
                     suffixIcon: IconButton(
                       icon: const Icon(Icons.image_outlined),
                       onPressed: _pickIcon,
@@ -179,7 +207,7 @@ class _AppEditDialogState extends ConsumerState<_AppEditDialog> {
                 const SizedBox(height: 8),
                 SwitchListTile(
                   contentPadding: EdgeInsets.zero,
-                  title: const Text('모바일에 표시'),
+                  title: Text(l10n.showOnMobileField),
                   value: _enabled,
                   onChanged: (v) => setState(() => _enabled = v),
                 ),
@@ -189,8 +217,8 @@ class _AppEditDialogState extends ConsumerState<_AppEditDialog> {
         ),
       ),
       actions: [
-        TextButton(onPressed: () => Navigator.pop(context), child: const Text('취소')),
-        FilledButton(onPressed: _save, child: const Text('저장')),
+        TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel)),
+        FilledButton(onPressed: _save, child: Text(l10n.save)),
       ],
     );
   }

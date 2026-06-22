@@ -1,0 +1,30 @@
+{
+  "@@locale": "fr",
+
+  "myPcs": "Mes PC",
+  "addPc": "Ajouter un PC",
+  "settings": "Paramètres",
+  "language": "Langue",
+  "cancel": "Annuler",
+  "delete": "Supprimer",
+  "retry": "Réessayer",
+  "errorWith": "Erreur : {e}",
+
+  "noPcs": "Aucun PC connecté.\n\nAppuyez sur « Ajouter un PC » ci-dessous et scannez le QR code affiché à l'écran de votre PC.",
+  "deletePc": "Supprimer le PC",
+  "deletePcConfirm": "Supprimer la connexion à « {name} » ?",
+
+  "scanQr": "Scanner le QR code",
+  "pointAtQr": "Pointez vers le QR code affiché à l'écran de votre PC",
+  "scanAgain": "Scanner à nouveau",
+  "pairingRequesting": "Demande d'appairage...",
+  "waitingApproval": "En attente d'approbation sur le PC...",
+  "pairRejected": "Le PC a refusé la demande de connexion.",
+  "pairTimeout": "Délai dépassé. Veuillez réessayer.",
+  "pairErrorWith": "Une erreur s'est produite lors de l'appairage : {e}",
+  "connectedTo": "Connecté à « {name} »",
+
+  "launched": "Lancé : {name}",
+  "launchFailedWith": "Échec : {message}",
+  "noAppsToShow": "Aucune application à afficher.\nEnregistrez des applications sur le PC."
+}

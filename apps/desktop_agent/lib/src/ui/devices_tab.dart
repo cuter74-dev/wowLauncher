@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared/shared.dart';
 
+import '../../l10n/app_localizations.dart';
 import '../state/providers.dart';
 
 /// Lists paired mobile devices with block / delete actions.
@@ -16,12 +17,13 @@ class DevicesTab extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
     final devicesAsync = ref.watch(devicesProvider);
 
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: const Text('연결된 기기'),
+        title: Text(l10n.connectedDevices),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
@@ -31,10 +33,10 @@ class DevicesTab extends ConsumerWidget {
       ),
       body: devicesAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text('오류: $e')),
+        error: (e, _) => Center(child: Text(l10n.errorWith(e))),
         data: (devices) {
           if (devices.isEmpty) {
-            return const Center(child: Text('연결된 기기가 없습니다.'));
+            return Center(child: Text(l10n.noDevices));
           }
           return ListView.separated(
             padding: const EdgeInsets.all(16),
@@ -51,21 +53,20 @@ class DevicesTab extends ConsumerWidget {
                 ),
                 title: Text(d.deviceName),
                 subtitle: Text(
-                  '마지막 접속: ${_formatTime(d.lastSeenAt)}'
-                  '${d.blocked ? '  ·  차단됨' : ''}',
+                  '${l10n.lastSeen(_formatTime(d.lastSeenAt))}${d.blocked ? '  ·  ${l10n.blockedSuffix}' : ''}',
                 ),
                 trailing: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     IconButton(
-                      tooltip: d.blocked ? '차단 해제' : '차단',
+                      tooltip: d.blocked ? l10n.unblock : l10n.block,
                       icon: Icon(d.blocked ? Icons.lock_open : Icons.block),
                       onPressed: () => ref
                           .read(devicesProvider.notifier)
                           .setBlocked(d.id, !d.blocked),
                     ),
                     IconButton(
-                      tooltip: '삭제',
+                      tooltip: l10n.delete,
                       icon: const Icon(Icons.delete_outline),
                       onPressed: () =>
                           ref.read(devicesProvider.notifier).delete(d.id),

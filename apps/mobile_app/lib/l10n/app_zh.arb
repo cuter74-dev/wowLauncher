@@ -1,0 +1,30 @@
+{
+  "@@locale": "zh",
+
+  "myPcs": "我的 PC",
+  "addPc": "添加 PC",
+  "settings": "设置",
+  "language": "语言",
+  "cancel": "取消",
+  "delete": "删除",
+  "retry": "重试",
+  "errorWith": "错误：{e}",
+
+  "noPcs": "尚未连接任何 PC。\n\n点击下方的“添加 PC”，并扫描 PC 屏幕上的 QR 码。",
+  "deletePc": "删除 PC",
+  "deletePcConfirm": "确定要删除与“{name}”的连接吗？",
+
+  "scanQr": "扫描 QR 码",
+  "pointAtQr": "请对准 PC 屏幕上的 QR 码",
+  "scanAgain": "重新扫描",
+  "pairingRequesting": "正在请求配对……",
+  "waitingApproval": "正在等待 PC 上的批准……",
+  "pairRejected": "PC 拒绝了连接请求。",
+  "pairTimeout": "已超时，请重试。",
+  "pairErrorWith": "配对过程中发生错误：{e}",
+  "connectedTo": "已连接到“{name}”",
+
+  "launched": "已启动：{name}",
+  "launchFailedWith": "失败：{message}",
+  "noAppsToShow": "暂无可显示的应用。\n请在 PC 上注册应用。"
+}

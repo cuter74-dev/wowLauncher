@@ -1,3 +1,4 @@
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared/shared.dart';
 
@@ -24,6 +25,7 @@ class AppServices {
     required this.launcher,
     required this.server,
     required this.agentName,
+    required this.languageCode,
   });
 
   final AppDatabase database;
@@ -36,6 +38,9 @@ class AppServices {
   final AgentServer server;
   String agentName;
 
+  /// Selected UI language code, or null to follow the system locale.
+  String? languageCode;
+
   /// Builds the fully wired set of services and opens the database.
   static Future<AppServices> bootstrap() async {
     final database = await AppDatabase.open();
@@ -46,6 +51,7 @@ class AppServices {
     final logDao = LogDao(db);
     final settings = SettingsStore(db);
     final agentName = await settings.getAgentName();
+    final languageCode = await settings.getLanguage();
 
     final pairingService = PairingService(deviceDao);
     const launcher = LauncherService();
@@ -69,6 +75,7 @@ class AppServices {
       launcher: launcher,
       server: server,
       agentName: agentName,
+      languageCode: languageCode,
     );
   }
 }
@@ -81,6 +88,27 @@ final servicesProvider = Provider<AppServices>(
 final pairingServiceProvider = Provider<PairingService>(
   (ref) => ref.watch(servicesProvider).pairingService,
 );
+
+// ---- Locale / language --------------------------------------------------
+
+/// Current UI locale. Null means "follow the system locale". Persisted via
+/// [SettingsStore] so the choice survives restarts.
+class LocaleNotifier extends Notifier<Locale?> {
+  @override
+  Locale? build() {
+    final code = ref.read(servicesProvider).languageCode;
+    return (code == null || code.isEmpty) ? null : Locale(code);
+  }
+
+  Future<void> setLanguage(String? code) async {
+    final services = ref.read(servicesProvider);
+    await services.settings.setLanguage(code);
+    services.languageCode = code;
+    state = (code == null || code.isEmpty) ? null : Locale(code);
+  }
+}
+
+final localeProvider = NotifierProvider<LocaleNotifier, Locale?>(LocaleNotifier.new);
 
 /// Local host name + usable LAN IPv4 addresses, refreshed on demand.
 final networkInfoProvider = FutureProvider<({String host, List<String> ips})>((ref) async {

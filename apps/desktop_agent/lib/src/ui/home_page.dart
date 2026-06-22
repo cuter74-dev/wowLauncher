@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../state/providers.dart';
+import '../../l10n/app_localizations.dart';
 import 'apps_tab.dart';
 import 'devices_tab.dart';
 import 'logs_tab.dart';
@@ -19,16 +19,16 @@ class HomePage extends ConsumerStatefulWidget {
 class _HomePageState extends ConsumerState<HomePage> {
   int _index = 0;
 
-  static const _destinations = <({IconData icon, String label})>[
-    (icon: Icons.dashboard_outlined, label: 'Status'),
-    (icon: Icons.apps_outlined, label: 'Apps'),
-    (icon: Icons.devices_outlined, label: 'Devices'),
-    (icon: Icons.receipt_long_outlined, label: 'Logs'),
-    (icon: Icons.settings_outlined, label: 'Settings'),
-  ];
-
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final destinations = <({IconData icon, String label})>[
+      (icon: Icons.dashboard_outlined, label: l10n.tabStatus),
+      (icon: Icons.apps_outlined, label: l10n.tabApps),
+      (icon: Icons.devices_outlined, label: l10n.tabDevices),
+      (icon: Icons.receipt_long_outlined, label: l10n.tabLogs),
+      (icon: Icons.settings_outlined, label: l10n.tabSettings),
+    ];
     const pages = <Widget>[
       StatusTab(),
       AppsTab(),
@@ -44,12 +44,16 @@ class _HomePageState extends ConsumerState<HomePage> {
             extended: MediaQuery.of(context).size.width > 900,
             selectedIndex: _index,
             onDestinationSelected: (i) => setState(() => _index = i),
-            leading: const Padding(
-              padding: EdgeInsets.symmetric(vertical: 16),
-              child: Icon(Icons.rocket_launch, size: 28),
+            leading: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: Image.asset('assets/wow_launcher_logo.png',
+                    width: 44, height: 44, fit: BoxFit.cover),
+              ),
             ),
             destinations: [
-              for (final d in _destinations)
+              for (final d in destinations)
                 NavigationRailDestination(
                   icon: Icon(d.icon),
                   label: Text(d.label),

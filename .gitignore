@@ -24,3 +24,6 @@ apps/*/web/
 # Secrets / local tooling (never commit)
 .env
 CLAUDE.md
+
+# Generated localizations (re-created by `flutter gen-l10n`)
+apps/*/lib/l10n/app_localizations*.dart

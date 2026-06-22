@@ -10,6 +10,7 @@ class SettingsStore {
 
   static const _kAgentName = 'agentName';
   static const _kPort = 'port';
+  static const _kLanguage = 'language';
 
   Future<String?> _get(String key) async {
     final rows = await db.query('settings', where: 'key = ?', whereArgs: [key], limit: 1);
@@ -42,4 +43,13 @@ class SettingsStore {
   }
 
   Future<void> setPort(int port) => _set(_kPort, port.toString());
+
+  /// Selected UI language code (e.g. 'en', 'ko'). Empty/null means "follow the
+  /// system locale".
+  Future<String?> getLanguage() async {
+    final raw = await _get(_kLanguage);
+    return (raw == null || raw.isEmpty) ? null : raw;
+  }
+
+  Future<void> setLanguage(String? code) => _set(_kLanguage, code ?? '');
 }

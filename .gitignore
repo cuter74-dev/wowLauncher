@@ -20,3 +20,7 @@ apps/*/web/
 .vscode/
 *.iml
 .DS_Store
+
+# Secrets / local tooling (never commit)
+.env
+CLAUDE.md

@@ -80,9 +80,9 @@ class _AppEditDialogState extends ConsumerState<_AppEditDialog> {
 
   /// Pick an installed macOS app and auto-fill name / path / icon.
   Future<void> _pickApplication() async {
-    final selected = await showApplicationPickerDialog(context);
-    if (selected == null) return;
-    final imp = await const MacAppImporter().extractFrom(selected.path);
+    final result = await showApplicationPickerDialog(context);
+    if (result == null || result.app == null) return;
+    final imp = await const MacAppImporter().extractFrom(result.app!.path);
     if (!mounted) return;
     setState(() {
       _name.text = imp.name;

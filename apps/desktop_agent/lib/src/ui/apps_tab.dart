@@ -15,13 +15,18 @@ import 'application_picker_dialog.dart';
 class AppsTab extends ConsumerWidget {
   const AppsTab({super.key});
 
-  /// One-step registration: pick an installed macOS app, auto-extract
-  /// name/path/icon, and save.
+  /// Opens the application picker. Choosing an app registers it in one step
+  /// (auto name/path/icon); choosing "manual entry" opens the edit dialog.
   Future<void> _addFromApplication(BuildContext context, WidgetRef ref) async {
-    final selected = await showApplicationPickerDialog(context);
-    if (selected == null) return;
+    final result = await showApplicationPickerDialog(context);
+    if (result == null || !context.mounted) return;
 
-    final imported = await const MacAppImporter().extractFrom(selected.path);
+    if (result.manual) {
+      await showAppEditDialog(context, ref, null);
+      return;
+    }
+
+    final imported = await const MacAppImporter().extractFrom(result.app!.path);
     final now = DateTime.now();
     final app = LaunchApp(
       id: const Uuid().v4(),
@@ -77,27 +82,17 @@ class AppsTab extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
 
     return Scaffold(
-      floatingActionButton: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          if (const MacAppImporter().isSupported) ...[
-            FloatingActionButton.extended(
-              heroTag: 'addFromApp',
+      floatingActionButton: const MacAppImporter().isSupported
+          ? FloatingActionButton.extended(
               onPressed: () => _addFromApplication(context, ref),
-              icon: const Icon(Icons.apps),
+              icon: const Icon(Icons.add),
               label: Text(l10n.addFromApplication),
+            )
+          : FloatingActionButton.extended(
+              onPressed: () => showAppEditDialog(context, ref, null),
+              icon: const Icon(Icons.add),
+              label: Text(l10n.addManual),
             ),
-            const SizedBox(height: 12),
-          ],
-          FloatingActionButton.extended(
-            heroTag: 'addManual',
-            onPressed: () => showAppEditDialog(context, ref, null),
-            icon: const Icon(Icons.add),
-            label: Text(l10n.addManual),
-          ),
-        ],
-      ),
       body: appsAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(child: Text(l10n.errorWith('$e'))),

@@ -5,10 +5,22 @@ import 'package:flutter/material.dart';
 import '../../l10n/app_localizations.dart';
 import '../services/macos_app_importer.dart';
 
-/// Shows a searchable list of installed macOS applications and returns the one
-/// the user taps, or null if cancelled.
-Future<InstalledApp?> showApplicationPickerDialog(BuildContext context) {
-  return showDialog<InstalledApp>(
+/// Result of the application picker: a chosen installed app, or a request to
+/// enter a program manually. `null` (from showDialog) means cancelled.
+class AppPickResult {
+  const AppPickResult.selected(this.app) : manual = false;
+  const AppPickResult.manual()
+      : app = null,
+        manual = true;
+
+  final InstalledApp? app;
+  final bool manual;
+}
+
+/// Shows a searchable list of installed macOS applications. Returns the chosen
+/// app, a manual-entry request, or null if cancelled.
+Future<AppPickResult?> showApplicationPickerDialog(BuildContext context) {
+  return showDialog<AppPickResult>(
     context: context,
     builder: (_) => const _ApplicationPickerDialog(),
   );
@@ -55,6 +67,13 @@ class _ApplicationPickerDialogState extends State<_ApplicationPickerDialog> {
               onChanged: (v) => setState(() => _query = v),
             ),
             const SizedBox(height: 8),
+            // Manual entry pinned at the top.
+            ListTile(
+              leading: const Icon(Icons.edit_outlined),
+              title: Text(l10n.addManual),
+              onTap: () => Navigator.pop(context, const AppPickResult.manual()),
+            ),
+            const Divider(height: 1),
             Expanded(
               child: items.isEmpty
                   ? Center(child: Text(l10n.noSearchResults))
@@ -70,7 +89,8 @@ class _ApplicationPickerDialogState extends State<_ApplicationPickerDialog> {
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
-                          onTap: () => Navigator.pop(context, app),
+                          onTap: () =>
+                              Navigator.pop(context, AppPickResult.selected(app)),
                         );
                       },
                     ),

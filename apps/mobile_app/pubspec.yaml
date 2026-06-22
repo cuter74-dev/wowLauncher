@@ -20,6 +20,9 @@ dependencies:
 
   flutter_riverpod: ^2.5.1
 
+  # Error tracking (GlitchTip — Sentry-compatible).
+  sentry_flutter: ^9.0.0
+
   # HTTP client for the agent API.
   http: ^1.2.1
 

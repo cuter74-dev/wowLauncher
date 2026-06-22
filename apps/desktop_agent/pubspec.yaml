@@ -23,6 +23,9 @@ dependencies:
   # State management.
   flutter_riverpod: ^2.5.1
 
+  # Error tracking (GlitchTip — Sentry-compatible).
+  sentry_flutter: ^9.0.0
+
   # Embedded HTTP server.
   shelf: ^1.4.1
   shelf_router: ^1.1.4
